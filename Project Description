@@ -1,0 +1,15 @@
+Final Report for ETL Project - Matthew Cole
+
+Extract
+Using data.gov, I pulled Vaccine Coverage data for all schools in the state of Washington in two separate CSV files. One CSV file was for vaccine data for the 2015-2016 school year and the other was for 2016-2017 school year. Next, I used the SchoolDigger API (https://api.schooldigger.com) to pull school ranking data for Washington schools for the years of 2015 and 2016. This data was extracted in a JSON format using the requests package in python. Due to API limitations, I was only able to pull 10 pages (50 schools per page) of ranking data per year. In total, I received ranking data for 500 Washington Schools per year.
+
+Transform
+After extracting from the Schooldigger API,I first subsetted the main JSON data request to create a datasource for only 2015 data an only 2016 data. Next, using only the 2015 data, I extracted each unique schood idenitifier, school name, school district, address, and city and placed it in a pandas dataframe to have a master list of the schools I wanted to eventually merge vaccination data with. After, I created two lists for each ranking year of the school id, school name, and that year's ranking and pushed each list into a pandas dataframe. 
+
+Next, I used pandas to read the Vaccine Coverage CSVs an brought them into a dataframe. I then had to create a matching dataframe to allow merging of schooldigger API data and the data.gov data. To do this, I set all of the columns I wanted to match on (2015 - school name and city, 2016 - school name and district) to lower case to allow for matching identifiers. I merged my data into two dataframes that then had school ids and vaccine information. Finally, I cleaned the dataframes to drop any unneccessary columns that repeated information. 
+
+Load
+I leveraged SQLAlchemy and PymySQL to create a connection to a pre-established mySQL database (etl-db) running ony my laptop. I then use pandas to_sql funtion to push my pandas dataframes to SQL. 
+
+Purpose
+The purpose of this SQL database would be to be able to use main schools table to link school ranking data with vaccine coverage data for either 2015 or 2016. This database wuld hopefully provide insights on which school a parent should choose for their child to attend if they want a mixture of both a healthy school population and great academic environment.
